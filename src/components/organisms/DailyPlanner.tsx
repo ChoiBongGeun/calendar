@@ -23,18 +23,16 @@ export default function DailyPlanner() {
       done: false,
       notification: false,
       date: selectedDate,
+      author: '사용자',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
-    if (window.innerWidth <= 1024) {
-      // 모바일에서는 바로 편집 모달 열기
-      setSelectedTodo(newTodo);
-      setIsAdding(true);
-    } else if (input.trim()) {
-      // 데스크톱에서는 입력된 제목이 있을 때만 추가
-      setTodos(prev => [...prev, newTodo]);
-      setInput('');
-      setTime('');
-    }
+    // 모든 환경에서 편집 모달 열기
+    setSelectedTodo(newTodo);
+    setIsAdding(true);
+    setInput('');
+    setTime('');
   };
 
   const handleToggleDone = (id: number) => {

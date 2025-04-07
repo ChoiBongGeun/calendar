@@ -1,0 +1,213 @@
+/* TodoItemCard 스타일 */
+.todo-item {
+  @apply bg-white dark:bg-gray-800 rounded-xl p-4 mb-3 border border-gray-100 dark:border-gray-700;
+}
+
+.todo-item:hover {
+  @apply border-blue-500 dark:border-blue-400;
+}
+
+.todo-item.completed {
+  @apply bg-gray-50 dark:bg-gray-700/50;
+}
+
+.todo-item.completed .todo-title {
+  @apply text-gray-400 dark:text-gray-500 line-through;
+}
+
+.todo-item .todo-title {
+  @apply text-gray-900 dark:text-gray-100 font-medium text-lg;
+}
+
+.todo-item .todo-content {
+  @apply text-gray-800 dark:text-gray-200;
+}
+
+.todo-item .todo-meta {
+  @apply flex items-center gap-2 mt-1 text-sm text-gray-500 dark:text-gray-400;
+}
+
+.todo-item .todo-actions {
+  @apply flex items-center gap-2 mt-4;
+}
+
+.todo-item .todo-actions button {
+  @apply p-2 rounded-lg transition-colors duration-200;
+}
+
+.todo-item .todo-actions button:hover {
+  @apply bg-gray-100 dark:bg-gray-700;
+}
+
+.todo-item .todo-actions button.delete:hover {
+  @apply bg-red-100 dark:bg-red-900/30 text-red-500;
+}
+
+.todo-item .todo-actions button.edit:hover {
+  @apply bg-blue-100 dark:bg-blue-900/30 text-blue-500;
+}
+
+.todo-item .todo-actions button.notification:hover {
+  @apply bg-yellow-100 dark:bg-yellow-900/30 text-yellow-500;
+}
+
+.todo-item .todo-actions button.complete:hover {
+  @apply bg-green-100 dark:bg-green-900/30 text-green-500;
+}
+
+/* TodoEditor 스타일 */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50;
+}
+
+.modal-content {
+  @apply bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-xl shadow-lg;
+}
+
+.modal-content h2 {
+  @apply text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4;
+}
+
+.modal-content .input-group {
+  @apply space-y-4;
+}
+
+.modal-content label {
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="time"],
+.modal-content textarea {
+  @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
+         bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+         focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+.modal-content textarea {
+  @apply h-32 resize-none;
+}
+
+.modal-content .checkbox-group {
+  @apply flex items-center mt-4;
+}
+
+.modal-content input[type="checkbox"] {
+  @apply h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500;
+}
+
+.modal-content .checkbox-label {
+  @apply ml-2 text-sm text-gray-700 dark:text-gray-300;
+}
+
+.modal-content .button-group {
+  @apply flex justify-end gap-2 mt-6;
+}
+
+.modal-content button {
+  @apply px-4 py-2 text-sm font-medium rounded-lg transition-colors;
+}
+
+.modal-content button.cancel {
+  @apply text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700
+         hover:bg-gray-200 dark:hover:bg-gray-600;
+}
+
+.modal-content button.save {
+  @apply text-white bg-blue-500 hover:bg-blue-600;
+}
+
+/* DailyPlanner 스타일 */
+.daily-planner {
+  @apply p-6;
+}
+
+.todo-input {
+  @apply flex gap-2 mb-6;
+}
+
+.todo-input input[type="text"] {
+  @apply border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 flex-1 
+         focus:outline-none focus:ring-2 focus:ring-blue-500 
+         bg-white dark:bg-gray-800 text-gray-900 dark:text-white;
+}
+
+.todo-input input[type="time"] {
+  @apply border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 w-32
+         focus:outline-none focus:ring-2 focus:ring-blue-500
+         bg-white dark:bg-gray-800 text-gray-900 dark:text-white;
+}
+
+.todo-input .add-button {
+  @apply bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 
+         transition-colors duration-200;
+}
+
+.todo-list {
+  @apply space-y-4;
+}
+
+.todo-list.empty {
+  @apply text-center text-gray-500 dark:text-gray-400 py-8;
+}
+
+.grow-base {
+  @apply flex-1;
+}
+
+/* TodoEditor 스타일 */
+.todo-editor {
+  @apply fixed inset-0 bg-black/50 flex items-center justify-center p-4;
+}
+
+.todo-editor-content {
+  @apply bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6;
+}
+
+.todo-editor textarea {
+  @apply w-full h-32 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none;
+}
+
+.todo-editor-actions {
+  @apply flex justify-end gap-2 mt-4;
+}
+
+.todo-editor-actions button {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+}
+
+.todo-editor-actions button.cancel {
+  @apply bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600;
+}
+
+.todo-editor-actions button.save {
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+.btn {
+  @apply rounded-lg transition-colors duration-200;
+}
+
+.btn-primary {
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+.btn-secondary {
+  @apply text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400;
+}
+
+.btn-danger {
+  @apply text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400;
+}
+
+.checkbox {
+  @apply h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500;
+}
+
+.time-tag {
+  @apply text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full;
+}
+
+.notification-icon {
+  @apply text-gray-500 dark:text-gray-400;
+} 
