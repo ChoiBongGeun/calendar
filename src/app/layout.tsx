@@ -6,7 +6,7 @@ import ClientLayout from './ClientLayout';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: '플래너',
+  title: '스케줄러',
   description: '일정을 관리하세요.',
 };
 

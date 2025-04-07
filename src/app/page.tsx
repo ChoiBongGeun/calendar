@@ -10,7 +10,7 @@ export default function Home() {
       <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
-            일일 계획 관리
+            해야 할일 관리
           </h1>
           
           <div className="flex flex-col lg:flex-row gap-8">

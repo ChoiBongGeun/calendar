@@ -3,7 +3,18 @@ import { TodoItem } from '@/atoms/todo';
 
 interface Props {
   todo: TodoItem;
-  onSave: (content: string, time?: string, notification?: boolean) => void;
+  onSave: (content: {
+    date: string;
+    notification: boolean;
+    createdAt: Date;
+    author: string;
+    id: number;
+    time: string | undefined;
+    title: string;
+    done: boolean;
+    content: string;
+    updatedAt: Date
+  }, time?: string, notification?: boolean) => void;
   onCancel: () => void;
   mode: 'insert' | 'edit';
 }
