@@ -1,69 +1,46 @@
-
 'use client';
 
-import { useRecoilState } from 'recoil';
-import { selectedDateState } from '@/atoms/todo';
-import { useMemo } from 'react';
+import { useState } from 'react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+import '@/styles/calendar.css';
+import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 
-const getMonthDays = (year: number, month: number): Date[] => {
-  const date = new Date(year, month, 1);
-  const days: Date[] = [];
-  while (date.getMonth() === month) {
-    days.push(new Date(date));
-    date.setDate(date.getDate() + 1);
-  }
-  return days;
-};
+export default function CustomCalendar() {
+    const [date, setDate] = useState<Date | null>(new Date());
 
-export default function Calendar() {
-  const [selectedDate, setSelectedDate] = useRecoilState(selectedDateState);
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
-
-  const days = useMemo(() => getMonthDays(year, month), [year, month]);
-
-  const isToday = (d: Date) => d.toDateString() === today.toDateString();
-  const isSelected = (d: Date) => d.toISOString().split('T')[0] === selectedDate;
-
-  const handleSelect = (d: Date) => {
-    const formatted = d.toISOString().split('T')[0];
-    setSelectedDate(formatted);
-  };
-
-  return (
-    <div className="bg-white dark:bg-gray-700 rounded-xl shadow p-4 transition-colors duration-500">
-      <h2 className="text-xl font-bold text-gray-700 dark:text-white mb-4">
-        {year}년 {month + 1}월
-      </h2>
-
-      <div className="grid grid-cols-7 gap-2 text-center text-sm">
-        {['일', '월', '화', '수', '목', '금', '토'].map((label, i) => (
-          <div key={i} className="font-medium text-gray-500 dark:text-gray-300">
-            {label}
-          </div>
-        ))}
-
-        {Array(days[0].getDay()).fill(null).map((_, i) => (
-          <div key={`pad-${i}`} className="" />
-        ))}
-
-        {days.map((d) => {
-          const isTodayClass = isToday(d) ? 'border border-blue-500 text-blue-600 dark:text-blue-300' : '';
-          const isSelectedClass = isSelected(d) ? 'bg-blue-500 text-white font-bold' : '';
-          const defaultClass = 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600';
-
-          return (
+    return (
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 w-full max-w-md transition-colors duration-300">
             <button
-              key={d.toISOString()}
-              onClick={() => handleSelect(d)}
-              className={`rounded-lg py-1 transition-all text-sm ${isSelectedClass || isTodayClass || defaultClass}`}
+                onClick={() => setDate(new Date())}
+                className="mb-4 px-4 py-2 flex items-center gap-2 bg-blue-600 text-white rounded-full shadow hover:bg-blue-700 transition duration-200"
             >
-              {d.getDate()}
+                <CalendarDaysIcon className="h-5 w-5" />
             </button>
-          );
-        })}
-      </div>
-    </div>
-  );
+
+            <div className="w-full">
+                <Calendar
+                    onChange={(newDate) => {
+                        if (newDate && !Array.isArray(newDate)) {
+                            setDate(newDate);
+                        }
+                    }}
+                    value={date}
+                    formatDay={(locale, date) => String(date.getDate())}
+                    prev2Label={null}
+                    next2Label={null}
+                    locale="ko-KR"
+                    tileClassName={({ date: currentDate, view }) => {
+                        if (view !== 'month') return;
+                        const today = new Date();
+                        const isToday =
+                            currentDate.getDate() === today.getDate() &&
+                            currentDate.getMonth() === today.getMonth() &&
+                            currentDate.getFullYear() === today.getFullYear();
+                        if (isToday) return 'custom-today';
+                    }}
+                />
+            </div>
+        </div>
+    );
 }

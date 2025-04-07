@@ -1,74 +1,54 @@
-/* 기본 날짜 타일 스타일 */
+.react-calendar {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  width: 100%;
+  max-width: 350px;
+  border: none;
+}
+
+.dark .react-calendar {
+  background: #1f2937;
+}
+
+.react-calendar__month-view__weekdays {
+  font-weight: 600;
+  color: rgb(107 114 128);
+  text-align: center;
+}
+
 .react-calendar__tile {
   color: rgb(31 41 55) !important;
+  border-radius: 9999px;
 }
 
 .dark .react-calendar__tile {
   color: rgb(229 231 235) !important;
 }
 
-/* 오늘 날짜 스타일 */
-.custom-today {
-  background: transparent !important;
-  color: rgb(31 41 55) !important;
+.react-calendar__tile--now:not(.react-calendar__tile--active) {
+  border: 1px solid rgb(59 130 246);
+  background: white !important;
+  color: rgb(59 130 246) !important;
 }
 
-.dark .custom-today {
-  color: rgb(229 231 235) !important;
+.dark .react-calendar__tile--now:not(.react-calendar__tile--active) {
+  border: 1px solid rgb(59 130 246);
+  background: #1f2937 !important;
+  color: rgb(59 130 246) !important;
 }
 
-/* 오늘 날짜 호버/포커스 스타일 */
-.react-calendar__tile--now:hover,
-.react-calendar__tile--now:focus {
-  background: rgb(229 231 235) !important;
-  color: rgb(31 41 55) !important;
-}
-
-.dark .react-calendar__tile--now:hover,
-.dark .react-calendar__tile--now:focus {
-  background: rgb(55 65 81) !important;
-  color: rgb(229 231 235) !important;
-}
-
-/* 선택된 날짜 스타일 */
-.react-calendar__tile--active,
-.react-calendar__tile--active:enabled:hover,
-.react-calendar__tile--active:enabled:focus {
-  background: rgb(59 130 246) !important;
-  color: white !important;
-}
-
-.dark .react-calendar__tile--active,
-.dark .react-calendar__tile--active:enabled:hover,
-.dark .react-calendar__tile--active:enabled:focus {
-  background: rgb(59 130 246) !important;
-  color: white !important;
-}
-
-/* 오늘 날짜가 선택된 경우 */
 .react-calendar__tile--now.react-calendar__tile--active,
-.react-calendar__tile--now.react-calendar__tile--active:enabled:hover,
-.react-calendar__tile--now.react-calendar__tile--active:enabled:focus {
+.react-calendar__tile--active {
   background: rgb(59 130 246) !important;
   color: white !important;
 }
 
-.dark .react-calendar__tile--now.react-calendar__tile--active,
-.dark .react-calendar__tile--now.react-calendar__tile--active:enabled:hover,
-.dark .react-calendar__tile--now.react-calendar__tile--active:enabled:focus {
-  background: rgb(59 130 246) !important;
-  color: white !important;
-}
-
-/* 일반 날짜 호버 스타일 */
-.react-calendar__tile:hover,
-.react-calendar__tile:focus {
+.react-calendar__tile:hover {
   background: rgb(229 231 235) !important;
-  color: rgb(31 41 55) !important;
 }
 
-.dark .react-calendar__tile:hover,
-.dark .react-calendar__tile:focus {
+.dark .react-calendar__tile:hover {
   background: rgb(55 65 81) !important;
-  color: rgb(229 231 235) !important;
-} 
+}

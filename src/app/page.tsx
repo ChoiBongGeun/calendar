@@ -2,7 +2,7 @@
 
 import { RecoilRoot } from "recoil";
 import DailyPlanner from '@/components/organisms/DailyPlanner';
-import DatePicker from '@/components/molecules/Calendar';
+import DatePicker from '@/components/organisms/Calendar';
 
 export default function Home() {
   return (
