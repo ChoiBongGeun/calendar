@@ -1,46 +1,76 @@
-import { useState } from 'react';
+'use client';
+
+import { useReducer } from 'react';
 import { useRecoilState } from 'recoil';
 import { TodoItem, currentTodosSelector } from '@/atoms/todo';
 import { notificationService } from '@/services/notification';
 import TodoItemCard from './TodoItemCard';
 import TodoEditor from './TodoEditor';
+import TodoInputForm from './TodoInputForm';
+
+type Mode = 'view' | 'edit' | 'add';
+
+interface PlannerState {
+  mode: Mode;
+  selectedTodo: TodoItem | null;
+  input: string;
+  time: string;
+}
+
+type PlannerAction =
+  | { type: 'SET_MODE'; payload: Mode }
+  | { type: 'SET_SELECTED_TODO'; payload: TodoItem | null }
+  | { type: 'SET_INPUT'; payload: string }
+  | { type: 'SET_TIME'; payload: string }
+  | { type: 'RESET_FORM' };
+
+const initialState: PlannerState = {
+  mode: 'view',
+  selectedTodo: null,
+  input: '',
+  time: '',
+};
+
+function plannerReducer(state: PlannerState, action: PlannerAction): PlannerState {
+  switch (action.type) {
+    case 'SET_MODE':
+      return { ...state, mode: action.payload };
+    case 'SET_SELECTED_TODO':
+      return { ...state, selectedTodo: action.payload };
+    case 'SET_INPUT':
+      return { ...state, input: action.payload };
+    case 'SET_TIME':
+      return { ...state, time: action.payload };
+    case 'RESET_FORM':
+      return { ...state, input: '', time: '' };
+    default:
+      return state;
+  }
+}
 
 export default function DailyPlanner() {
   const [todos, setTodos] = useRecoilState(currentTodosSelector);
-  const [input, setInput] = useState('');
-  const [time, setTime] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
-  const [selectedTodo, setSelectedTodo] = useState<TodoItem | null>(null);
+  const [state, dispatch] = useReducer(plannerReducer, initialState);
 
   const handleAddTodo = () => {
-    if (!input.trim()) return;
-    const newTodo = {
-      title: input.trim(),
-      time: time || undefined,
-      content: ''
+    if (!state.input.trim()) return;
+    
+    const newTodo: TodoItem = {
+      id: Date.now(),
+      title: state.input.trim(),
+      time: state.time || undefined,
+      content: '',
+      done: false,
+      author: '사용자',
+      notification: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
-    setTodos(prev => [...prev, {
-      id: Date.now(),
-      ...newTodo,
-      done: false,
-      author: '사용자',
-      notification: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }]);
-    setInput('');
-    setTime('');
-    setSelectedTodo({
-      id: Date.now(),
-      ...newTodo,
-      done: false,
-      author: '사용자',
-      notification: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    setIsAdding(true);
+
+    setTodos(prev => [...prev, newTodo]);
+    dispatch({ type: 'SET_SELECTED_TODO', payload: newTodo });
+    dispatch({ type: 'SET_MODE', payload: 'add' });
+    dispatch({ type: 'RESET_FORM' });
   };
 
   const handleToggleDone = (id: number) => {
@@ -57,14 +87,15 @@ export default function DailyPlanner() {
   };
 
   const startEdit = (todo: TodoItem) => {
-    setSelectedTodo(todo);
-    setIsEditing(true);
+    dispatch({ type: 'SET_SELECTED_TODO', payload: todo });
+    dispatch({ type: 'SET_MODE', payload: 'edit' });
   };
 
   const saveEdit = (content: string, time?: string, notification?: boolean) => {
-    if (!selectedTodo) return;
+    if (!state.selectedTodo) return;
+    
     const updatedTodo = {
-      ...selectedTodo,
+      ...state.selectedTodo,
       content,
       time,
       notification,
@@ -73,47 +104,29 @@ export default function DailyPlanner() {
     
     setTodos(prev =>
       prev.map(todo =>
-        todo.id === selectedTodo.id ? updatedTodo : todo
+        todo.id === state.selectedTodo?.id ? updatedTodo : todo
       )
     );
 
-    // 알림 설정이 변경된 경우 알림 스케줄링 업데이트
     if (notification && time) {
       notificationService.scheduleNotification(updatedTodo);
     } else {
-      notificationService.cancelNotification(selectedTodo.id);
+      notificationService.cancelNotification(state.selectedTodo.id);
     }
 
-    setIsEditing(false);
-    setIsAdding(false);
-    setSelectedTodo(null);
+    dispatch({ type: 'SET_MODE', payload: 'view' });
+    dispatch({ type: 'SET_SELECTED_TODO', payload: null });
   };
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <div className="mb-4">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="할일 제목"
-            className="flex-1 px-4 py-2 border rounded-lg"
-          />
-          <input
-            type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            className="px-4 py-2 border rounded-lg"
-          />
-          <button
-            onClick={handleAddTodo}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            추가
-          </button>
-        </div>
-      </div>
+      <TodoInputForm
+        input={state.input}
+        time={state.time}
+        onInputChange={(value: string) => dispatch({ type: 'SET_INPUT', payload: value })}
+        onTimeChange={(value: string) => dispatch({ type: 'SET_TIME', payload: value })}
+        onAdd={handleAddTodo}
+      />
 
       <div className="space-y-4">
         {todos.map(todo => (
@@ -127,16 +140,15 @@ export default function DailyPlanner() {
         ))}
       </div>
 
-      {(isEditing || isAdding) && selectedTodo && (
+      {(state.mode === 'edit' || state.mode === 'add') && state.selectedTodo && (
         <TodoEditor
-          todo={selectedTodo}
+          todo={state.selectedTodo}
           onSave={saveEdit}
           onCancel={() => {
-            setIsEditing(false);
-            setIsAdding(false);
-            setSelectedTodo(null);
+            dispatch({ type: 'SET_MODE', payload: 'view' });
+            dispatch({ type: 'SET_SELECTED_TODO', payload: null });
           }}
-          mode={isAdding ? 'insert' : 'edit'}
+          mode={state.mode === 'add' ? 'insert' : 'edit'}
         />
       )}
     </div>

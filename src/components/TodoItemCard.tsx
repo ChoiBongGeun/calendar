@@ -1,3 +1,5 @@
+'use client';
+
 import { TodoItem } from '@/atoms/todo';
 
 interface Props {

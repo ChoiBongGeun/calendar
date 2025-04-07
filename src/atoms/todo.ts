@@ -10,6 +10,7 @@ export interface TodoItem {
   notification?: boolean;
   createdAt: Date;
   updatedAt: Date;
+  date: string;
 }
 
 export const todosState = atom<Record<string, TodoItem[]>>({
@@ -37,14 +38,16 @@ export const currentTodosSelector = selector<TodoItem[]>({
     }));
   },
 });
-selectorFamily<TodoItem | undefined, number>({
+
+export const todoByIdSelector = selectorFamily<TodoItem | undefined, number>({
   key: 'todoByIdSelector',
   get: (id) => ({ get }) => {
     const todos = get(currentTodosSelector);
     return todos.find(todo => todo.id === id);
   },
 });
-selectorFamily<TodoItem, { title: string; time?: string; content?: string }>({
+
+export const addTodoSelector = selectorFamily<TodoItem, { title: string; time?: string; content?: string }>({
   key: 'addTodoSelector',
   get: (params) => ({ get }) => {
     get(currentTodosSelector);
@@ -53,11 +56,12 @@ selectorFamily<TodoItem, { title: string; time?: string; content?: string }>({
       title: params.title,
       content: params.content || '',
       done: false,
-      author: '비회원',
+      author: '사용자',
       time: params.time,
       notification: false,
       createdAt: new Date(),
       updatedAt: new Date(),
+      date: new Date().toISOString().split('T')[0],
     };
     return newTodo;
   },
@@ -66,7 +70,8 @@ selectorFamily<TodoItem, { title: string; time?: string; content?: string }>({
     set(currentTodosSelector, [...todos, newValue as TodoItem]);
   },
 });
-selectorFamily<TodoItem, { id: number; updates: Partial<TodoItem> }>({
+
+export const updateTodoSelector = selectorFamily<TodoItem, { id: number; updates: Partial<TodoItem> }>({
   key: 'updateTodoSelector',
   get: (params) => ({ get }) => {
     const todos = get(currentTodosSelector);
@@ -77,15 +82,16 @@ selectorFamily<TodoItem, { id: number; updates: Partial<TodoItem> }>({
   set: (params) => ({ set, get }, newValue) => {
     const todos = get(currentTodosSelector);
     set(currentTodosSelector, todos.map(todo =>
-        todo.id === params.id ? newValue as TodoItem : todo
+      todo.id === params.id ? newValue as TodoItem : todo
     ));
   },
 });
-selectorFamily<void, number>({
+
+export const deleteTodoSelector = selectorFamily<void, number>({
   key: 'deleteTodoSelector',
   get: () => () => {},
   set: (id) => ({ set, get }) => {
     const todos = get(currentTodosSelector);
     set(currentTodosSelector, todos.filter(todo => todo.id !== id));
   },
-});
+}); 
