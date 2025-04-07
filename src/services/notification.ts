@@ -27,11 +27,11 @@ class NotificationService {
     const [hours, minutes] = todo.time.split(':').map(Number);
     const now = new Date();
     const notificationTime = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      hours,
-      minutes
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        hours,
+        minutes
     );
 
     // 이미 지난 시간이라면 다음 날로 설정
@@ -40,7 +40,7 @@ class NotificationService {
     }
 
     const delay = notificationTime.getTime() - now.getTime();
-    
+
     const timeout = setTimeout(() => {
       this.showNotification(todo);
     }, delay);

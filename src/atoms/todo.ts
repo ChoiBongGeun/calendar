@@ -37,25 +37,23 @@ export const currentTodosSelector = selector<TodoItem[]>({
     }));
   },
 });
-
-export const todoByIdSelector = selectorFamily<TodoItem | undefined, number>({
+selectorFamily<TodoItem | undefined, number>({
   key: 'todoByIdSelector',
   get: (id) => ({ get }) => {
     const todos = get(currentTodosSelector);
     return todos.find(todo => todo.id === id);
   },
 });
-
-export const addTodoSelector = selectorFamily<TodoItem, { title: string; time?: string; content?: string }>({
+selectorFamily<TodoItem, { title: string; time?: string; content?: string }>({
   key: 'addTodoSelector',
   get: (params) => ({ get }) => {
-    const todos = get(currentTodosSelector);
+    get(currentTodosSelector);
     const newTodo: TodoItem = {
       id: Date.now(),
       title: params.title,
       content: params.content || '',
       done: false,
-      author: '사용자',
+      author: '비회원',
       time: params.time,
       notification: false,
       createdAt: new Date(),
@@ -63,13 +61,12 @@ export const addTodoSelector = selectorFamily<TodoItem, { title: string; time?: 
     };
     return newTodo;
   },
-  set: (params) => ({ set, get }, newValue) => {
+  set: () => ({ set, get }, newValue) => {
     const todos = get(currentTodosSelector);
     set(currentTodosSelector, [...todos, newValue as TodoItem]);
   },
 });
-
-export const updateTodoSelector = selectorFamily<TodoItem, { id: number; updates: Partial<TodoItem> }>({
+selectorFamily<TodoItem, { id: number; updates: Partial<TodoItem> }>({
   key: 'updateTodoSelector',
   get: (params) => ({ get }) => {
     const todos = get(currentTodosSelector);
@@ -80,16 +77,15 @@ export const updateTodoSelector = selectorFamily<TodoItem, { id: number; updates
   set: (params) => ({ set, get }, newValue) => {
     const todos = get(currentTodosSelector);
     set(currentTodosSelector, todos.map(todo =>
-      todo.id === params.id ? newValue as TodoItem : todo
+        todo.id === params.id ? newValue as TodoItem : todo
     ));
   },
 });
-
-export const deleteTodoSelector = selectorFamily<void, number>({
+selectorFamily<void, number>({
   key: 'deleteTodoSelector',
   get: () => () => {},
   set: (id) => ({ set, get }) => {
     const todos = get(currentTodosSelector);
     set(currentTodosSelector, todos.filter(todo => todo.id !== id));
   },
-}); 
+});

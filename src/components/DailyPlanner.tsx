@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { TodoItem, currentTodosSelector, addTodoSelector, updateTodoSelector, deleteTodoSelector } from '@/atoms/todo';
+import { useRecoilState } from 'recoil';
+import { TodoItem, currentTodosSelector } from '@/atoms/todo';
 import { notificationService } from '@/services/notification';
 import TodoItemCard from './TodoItemCard';
 import TodoEditor from './TodoEditor';
