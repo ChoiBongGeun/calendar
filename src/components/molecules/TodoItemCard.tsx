@@ -1,4 +1,6 @@
-import { TodoItem } from '@/atoms/todo';
+'use client';
+
+import { TodoItem } from '@/types/todo';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -9,7 +11,7 @@ interface Props {
   onEdit: (todo: TodoItem) => void;
 }
 
-export default function TodoItemCard({ todo, onToggleDone, onDelete, onEdit }: Props) {
+export default function TodoItemCard({ todo, onToggleDone, onDelete, onEdit }: Props): JSX.Element {
   return (
     <div className="todo-item bg-white dark:bg-gray-700 rounded-xl p-4 shadow">
       <div className="flex items-start justify-between">
@@ -41,18 +43,34 @@ export default function TodoItemCard({ todo, onToggleDone, onDelete, onEdit }: P
               )}
             </div>
             {todo.content && (
-              <div className={`mt-1 text-sm prose dark:prose-invert max-w-none ${todo.done ? 'text-gray-400' : 'text-gray-600'}`}>
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {todo.content}
-                </ReactMarkdown>
+              <div className={`mt-1 text-sm ${todo.done ? 'text-gray-400' : 'text-gray-600 dark:text-gray-300'}`}>
+                <article className="prose prose-sm dark:prose-invert max-w-none">
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      h1: ({node, ...props}) => <h1 className="text-2xl font-bold mb-4" {...props} />,
+                      h2: ({node, ...props}) => <h2 className="text-xl font-bold mb-3" {...props} />,
+                      h3: ({node, ...props}) => <h3 className="text-lg font-bold mb-2" {...props} />,
+                      p: ({node, ...props}) => <p className="mb-4" {...props} />,
+                      ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
+                      ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />,
+                      li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                      blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-gray-300 pl-4 italic mb-4" {...props} />,
+                      code: ({node, ...props}) => <code className="bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded" {...props} />,
+                      pre: ({node, ...props}) => <pre className="bg-gray-200 dark:bg-gray-700 p-4 rounded mb-4 overflow-x-auto" {...props} />
+                    }}
+                  >
+                    {todo.content}
+                  </ReactMarkdown>
+                </article>
               </div>
             )}
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => onEdit(todo)}
-            className="btn btn-secondary p-2"
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
             title="수정"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -61,7 +79,7 @@ export default function TodoItemCard({ todo, onToggleDone, onDelete, onEdit }: P
           </button>
           <button
             onClick={() => onDelete(todo.id)}
-            className="btn btn-danger p-2"
+            className="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
             title="삭제"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

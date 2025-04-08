@@ -1,17 +1,13 @@
 'use client';
 
-import { TodoItem } from '@/atoms/todo';
+import { TodoItem } from '@/types/todo';
 
 class NotificationService {
   private static instance: NotificationService;
-  private notifications: Map<number, NodeJS.Timeout> = new Map();
-  private permission: NotificationPermission = 'default';
-  private lastNotificationTime: number = 0;
+  private notifications: Map<number, NodeJS.Timeout>;
 
   private constructor() {
-    if (typeof window !== 'undefined') {
-      this.requestPermission();
-    }
+    this.notifications = new Map();
   }
 
   public static getInstance(): NotificationService {
@@ -21,18 +17,47 @@ class NotificationService {
     return NotificationService.instance;
   }
 
-  private async requestPermission() {
-    try {
-      this.permission = await Notification.requestPermission();
-    } catch (error) {
-      console.error('알림 권한 요청 실패:', error);
+  private convertMarkdownToText(content: string): string {
+    return content
+      .replace(/^#+\s+/gm, '') // 제목 제거
+      .replace(/`([^`]+)`/g, '$1') // 인라인 코드 제거
+      .replace(/```[\s\S]*?```/g, '') // 코드 블록 제거
+      .replace(/\*\*([^*]+)\*\*/g, '$1') // 굵은 글씨 제거
+      .replace(/\*([^*]+)\*/g, '$1') // 기울임 제거
+      .replace(/~~([^~]+)~~/g, '$1') // 취소선 제거
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // 링크 제거
+      .replace(/>\s*(.+)/g, '$1') // 인용문 제거
+      .replace(/\n\s*[-*+]\s/g, '\n• ') // 목록 기호 통일
+      .replace(/\n\s*\d+\.\s/g, '\n• ') // 번호 목록 기호 통일
+      .trim();
+  }
+
+  private showNotification(todo: TodoItem): void {
+    if (!('Notification' in window)) {
+      console.log('이 브라우저는 알림을 지원하지 않습니다.');
+      return;
+    }
+
+    if (Notification.permission === 'granted') {
+      new Notification(todo.title, {
+        body: todo.content ? this.convertMarkdownToText(todo.content) : '할일이 있습니다.',
+        icon: '/favicon.ico',
+      });
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          new Notification(todo.title, {
+            body: todo.content ? this.convertMarkdownToText(todo.content) : '할일이 있습니다.',
+            icon: '/favicon.ico',
+          });
+        }
+      });
     }
   }
 
-  scheduleNotification(todo: TodoItem) {
+  public scheduleNotification(todo: TodoItem): void {
     if (!todo.time || !todo.notification) return;
 
-    // 이미 예약된 알림이 있다면 취소
     this.cancelNotification(todo.id);
 
     const [hours, minutes] = todo.time.split(':').map(Number);
@@ -45,7 +70,6 @@ class NotificationService {
       minutes
     );
 
-    // 이미 지난 시간이라면 다음 날로 설정
     if (notificationTime < now) {
       notificationTime.setDate(notificationTime.getDate() + 1);
     }
@@ -56,41 +80,14 @@ class NotificationService {
       this.showNotification(todo);
     }, delay);
 
-    this.notifications.set(timeout);
+    this.notifications.set(todo.id, timeout);
   }
 
-  cancelNotification(todoId: number) {
-    const timeout = this.notifications.get(todoId);
+  public cancelNotification(id: number): void {
+    const timeout = this.notifications.get(id);
     if (timeout) {
       clearTimeout(timeout);
-      this.notifications.delete(todoId);
-    }
-  }
-
-  public async showNotification(todo: TodoItem) {
-    if (this.permission !== 'granted') {
-      await this.requestPermission();
-    }
-
-    // 1초 이내에 같은 알림이 오는 것을 방지
-    const now = Date.now();
-    if (now - this.lastNotificationTime < 1000) {
-      return;
-    }
-    this.lastNotificationTime = now;
-
-    if (this.permission === 'granted') {
-      const notification = new Notification(todo.title, {
-        body: todo.content || `${todo.time}에 할 일이 있습니다.`,
-        icon: '/favicon.ico',
-        badge: '/notification-badge.png',
-        requireInteraction: true,
-      });
-
-      notification.onclick = () => {
-        window.focus();
-        notification.close();
-      };
+      this.notifications.delete(id);
     }
   }
 }

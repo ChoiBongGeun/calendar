@@ -8,12 +8,10 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
 }
 
 body {
@@ -142,18 +140,6 @@ body {
 
 /* 컴포넌트 스타일 */
 @layer components {
-  .calendar-day {
-    @apply p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors;
-  }
-
-  .calendar-day.selected {
-    @apply bg-blue-100 border-blue-500;
-  }
-
-  .calendar-day.today {
-    @apply bg-yellow-100 border-yellow-500;
-  }
-
   .todo-item {
     @apply bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300;
   }
@@ -221,14 +207,7 @@ body {
   margin: 0;
 }
 
-.input[type="time"]::-webkit-datetime-edit-hour-field,
-
-
 /* Tailwind dark mode overrides */
-.dark body {
-  @apply bg-gray-900 text-white;
-}
-
 .dark .react-calendar {
   background: #1f2937;
   color: #e5e7eb;
@@ -237,4 +216,39 @@ body {
 .dark .react-calendar__tile--active {
   background: #2563eb;
   color: white;
+}
+
+/* 다크 모드 전환 애니메이션 */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* 다크 모드 오버라이드 */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+.dark .todo-item {
+  @apply bg-gray-800 text-white;
+}
+
+.dark .todo-item.done {
+  @apply bg-gray-700;
+}
+
+.dark .modal-content {
+  @apply bg-gray-800 text-white;
+}
+
+.dark .input {
+  @apply bg-gray-700 text-white border-gray-600;
+}
+
+.dark .checkbox {
+  @apply border-gray-600;
 }

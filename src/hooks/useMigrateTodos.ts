@@ -1,15 +1,12 @@
-
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
-import { migrateUndoneTodosToToday, todoListState } from '@/atoms/todo';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { moveUnfinishedTodosToNextDay, todosState } from '@/store/todo';
 
-export function useMigrateTodosOnMount() {
-  const [todos, setTodos] = useRecoilState(todoListState);
+export function useMigrateTodosOnMount(): void {
+  const setTodos = useSetRecoilState(todosState);
+  const updatedTodos = useRecoilValue(moveUnfinishedTodosToNextDay);
 
   useEffect(() => {
-    const updated = migrateUndoneTodosToToday(todos);
-    if (updated.length > todos.length) {
-      setTodos(updated);
-    }
-  }, []);
+    setTodos(updatedTodos);
+  }, [updatedTodos, setTodos]);
 }
