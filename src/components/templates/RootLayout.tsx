@@ -3,6 +3,7 @@
 import { Inter } from 'next/font/google';
 import '@/app/globals.css';
 import { useEffect, useState } from 'react';
+import TodoModal from "@/components/organisms/TodoModal";
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko" className={isDark ? 'dark' : ''}>
       <body className={`${inter.className} bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 transition-colors duration-500`}>
         {children}
+        <TodoModal />
       </body>
     </html>
   );

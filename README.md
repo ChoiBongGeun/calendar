@@ -4,162 +4,63 @@
 
 - **프레임워크**: Next.js 13.5.6
 - **언어**: TypeScript
-- **상태 관리**: Recoil, Zustand
+- **상태 관리**: Zustand (Recoil 제거됨)
 - **스타일링**: Tailwind CSS
 - **아이콘**: Heroicons, Lucide React
 - **날짜 처리**: date-fns
-- **마크다운**: react-markdown, remark-gfm
+- **마크다운 지원**: react-markdown, remark-gfm
 - **캘린더**: react-calendar
-- **테스트**: Jest, React Testing Library
+- **알림**: Notification API
+- **테스트 도구**: Jest, React Testing Library
 
 ## 주요 기능
 
 1. **할일 관리**
    - 일별 할일 추가, 수정, 삭제
-   - 할일 완료 상태 관리
-   - 시간 지정 기능
+   - 할일 완료 상태 토글
+   - 시간 및 알림 설정
+   - Markdown 기반 내용 입력
+   - 미완료 할일 자동 이월
 
 2. **캘린더 기능**
-   - 월별/주별/일별 뷰
-   - 날짜 선택 및 이동
-   - 할일이 있는 날짜 표시
+   - 날짜 이동 및 일별 할일 확인
+   - 오늘 날짜 강조
 
-3. **테마 기능**
-   - 라이트/다크 모드 지원
-   - 자동 테마 저장
-   - 부드러운 테마 전환 애니메이션
+3. **모달 기반 UI**
+   - 전역 상태로 제어되는 모달 구조
+   - 할 일 등록/수정 시 TodoEditor 모달 사용
 
-4. **알림 기능**
-   - 브라우저 알림 지원
-   - 할일 시간 알림
-
-5. **반응형 디자인**
+4. **반응형 디자인**
    - 모바일/데스크톱 최적화
-   - 적응형 레이아웃
+   - 테마 지원: 다크 모드 / 라이트 모드
 
-## 프로젝트 구조 (Atomic Design)
+## 프로젝트 구조 (Atomic Design + Zustand 상태 관리)
 
 ```
 src/
   ├── components/
-  │   ├── atoms/          # 기본 UI 컴포넌트 (Button, Input 등)
-  │   ├── molecules/      # atoms의 조합 (TodoForm, TodoItem 등)
-  │   ├── organisms/      # molecules의 조합 (Calendar, DailyPlanner 등)
-  │   └── templates/      # 페이지 레이아웃
-  ├── pages/              # 페이지 컴포넌트
-  ├── store/              # 상태 관리
-  └── services/           # 서비스 로직
+  │   ├── atoms/            # 기본 UI 요소들 (Button, Input 등)
+  │   ├── molecules/        # 단순한 조합 (TodoInputForm, TodoItemCard 등)
+  │   ├── organisms/        # 독립된 기능 단위 (DailyPlanner, TodoEditor, Calendar 등)
+  │   ├── templates/        # 레이아웃 틀 (RootLayout 등)
+  │   └── pages/            # 페이지 단위 UI (PlannerClient 등)
+  ├── hooks/                # 커스텀 훅 모음 (useMigrateTodos 등)
+  ├── services/             # 브라우저 API 등 외부 기능 래핑
+  ├── store/                # Zustand 기반 전역 상태
+  ├── styles/               # CSS 및 Tailwind 설정
+  ├── types/                # 전역 타입 정의
+  └── app/                  # Next.js 13+ 앱 라우팅 구조
 ```
 
-## 테스트 구조
+## 상태 관리
 
-### 테스트 환경 설정
+- `useTodoStore`: 할 일 데이터 저장 및 조작
+- `useTodoModalStore`: TodoEditor 모달 상태 관리
+- `useTodoInputStore`: 할 일 입력 필드 상태 관리
 
-1. **의존성 설치**:
+## 시작 방법
+
 ```bash
-npm install --save-dev @testing-library/jest-dom @testing-library/react @testing-library/user-event jest jest-environment-jsdom ts-jest
-```
-
-2. **테스트 실행**:
-```bash
-npm test        # 모든 테스트 실행
-npm run test:watch  # 변경사항 감지하여 테스트 실행
-```
-
-### 테스트 계층 구조
-
-1. **Atoms 테스트**
-   - 기본 UI 컴포넌트 테스트
-   - 예: Button, Input, TimeTag 등
-
-2. **Molecules 테스트**
-   - 복합 UI 컴포넌트 테스트
-   - 예: TodoForm, TodoItem 등
-
-3. **Organisms 테스트**
-   - 복잡한 UI 컴포넌트 테스트
-   - 예: Calendar, DailyPlanner 등
-
-4. **Templates 테스트**
-   - 레이아웃 컴포넌트 테스트
-   - 예: MainLayout, PlannerLayout 등
-
-5. **Pages 테스트**
-   - 페이지 컴포넌트 테스트
-   - 예: Home 페이지 등
-
-### 테스트 예시
-
-```typescript
-// atoms/Button/__tests__/Button.test.tsx
-import { render, screen } from '@testing-library/react'
-import Button from '../Button'
-
-describe('Button', () => {
-  it('버튼이 올바르게 렌더링된다', () => {
-    render(<Button>클릭</Button>)
-    expect(screen.getByRole('button')).toHaveTextContent('클릭')
-  })
-})
-
-// organisms/Calendar/__tests__/Calendar.test.tsx
-import { render, screen, fireEvent } from '@testing-library/react'
-import Calendar from '../Calendar'
-import { useTodoStore } from '@/store/todo'
-
-jest.mock('@/store/todo')
-
-describe('Calendar', () => {
-  it('캘린더가 올바르게 렌더링되고 날짜 선택이 작동한다', () => {
-    const mockSetSelectedDate = jest.fn()
-    ;(useTodoStore as jest.Mock).mockReturnValue({
-      selectedDate: '2024-03-20',
-      setSelectedDate: mockSetSelectedDate,
-    })
-
-    render(<Calendar />)
-    const dateButton = screen.getByText('20')
-    fireEvent.click(dateButton)
-
-    expect(mockSetSelectedDate).toHaveBeenCalledWith('2024-03-20')
-  })
-})
-```
-
-## 시작하기
-
-1. 의존성 설치:
-```bash
-npm install
-# or
 yarn install
-```
-
-2. 개발 서버 실행:
-```bash
-npm run dev
-# or
 yarn dev
 ```
-
-3. 브라우저에서 [http://localhost:23000](http://localhost:23000) 접속
-
-## 빌드 및 배포
-
-1. 프로덕션 빌드:
-```bash
-npm run build
-# or
-yarn build
-```
-
-2. 서버 시작:
-```bash
-npm run start
-# or
-yarn start
-```
-
-## 디자인 가이드
-
-자세한 디자인 가이드는 [DESIGN_GUIDE.md](DESIGN_GUIDE.md)를 참조하세요.

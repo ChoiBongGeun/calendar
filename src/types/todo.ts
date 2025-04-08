@@ -22,4 +22,5 @@ export interface TodoItem {
   createdAt: Date;
   updatedAt: Date;
   date: string;
+  isNew?: boolean;
 } 

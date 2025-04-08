@@ -1,25 +1,23 @@
-
 'use client';
 
-import { useMigrateTodosOnMount } from '@/hooks/useMigrateTodos';
+import {useMigrateTodos} from '@/hooks/useMigrateTodos';
 import Calendar from '@/components/organisms/Calendar';
-import DailyPlanner from '@/components/DailyPlanner';
+import DailyPlanner from '@/components/organisms/DailyPlanner';
 import Card from '@/components/shared/Card';
-import LayoutContainer from '@/layouts/LayoutContainer';
 
 export default function PlannerClient() {
-  useMigrateTodosOnMount();
+  useMigrateTodos();
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 transition-colors duration-500">
-      <LayoutContainer>
+      <div className="container mx-auto px-4 py-8">
         <Card variant="primary">
           <Calendar />
         </Card>
         <Card variant="secondary">
           <DailyPlanner />
         </Card>
-      </LayoutContainer>
+      </div>
     </main>
   );
 }
