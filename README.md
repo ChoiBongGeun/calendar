@@ -1,10 +1,10 @@
-# 일일 계획 관리 앱
+# 일일 계획 관리 웹
 
 ## 기술 스택
 
 - **프레임워크**: Next.js 13.5.6
 - **언어**: TypeScript
-- **상태 관리**: Zustand (Recoil 제거됨)
+- **상태 관리**: Zustand
 - **스타일링**: Tailwind CSS
 - **아이콘**: Heroicons, Lucide React
 - **날짜 처리**: date-fns
