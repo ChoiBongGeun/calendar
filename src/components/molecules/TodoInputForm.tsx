@@ -2,6 +2,7 @@
 
 import { useTodoInputStore } from '@/store/todoInput';
 import { useTodoModalStore } from '@/store/todoModal';
+import { useTodoStore } from '@/store/todo';
 import { TodoItem } from '@/types/todo';
 
 export default function TodoInputForm() {
@@ -10,17 +11,16 @@ export default function TodoInputForm() {
   const setInput = useTodoInputStore((state) => state.setInput);
   const setTime = useTodoInputStore((state) => state.setTime);
   const reset = useTodoInputStore((state) => state.reset);
+  const { selectedDate } = useTodoStore();
 
   const handleAdd = () => {
-    const today = new Date().toISOString().split('T')[0];
-
     const newTodo: TodoItem = {
       id: Date.now(),
       title: input.trim() || '',
       content: '',
       done: false,
       author: '비회원',
-      date: today,
+      date: selectedDate,
       createdAt: new Date(),
       updatedAt: new Date(),
       notification: false,
